@@ -21,7 +21,7 @@
 # Disabling this will also mean that passwords must be stored in plain text. It
 # is strongly recommended that you only disable WITH_TLS if you are not using
 # password authentication at all.
-WITH_TLS:=yes
+WITH_TLS:=no
 
 # Comment out to disable TLS/PSK support in the broker and client. Requires
 # WITH_TLS=yes.
@@ -96,6 +96,9 @@ DB_HTML_XSL=man/html.xsl
 
 #MANCOUNTRIES=en_GB
 
+CC=mipsel-linux-gcc
+CXX=mipsel-linux-g++
+
 UNAME:=$(shell uname -s)
 
 ifeq ($(UNAME),SunOS)
@@ -108,7 +111,9 @@ else
 	CFLAGS?=-Wall -ggdb -O2
 endif
 
-LIB_CFLAGS:=${CFLAGS} ${CPPFLAGS} -I. -I.. -I../lib
+LDFLAGS:=$(LDFLAGS) -lssl -lcrypto -L /opt/openssl-1.0.0l/build/lib -lcares -L /opt/c-ares-1.12.0/build/lib -luuid -L /opt/e2fsprogs-1.41.14/lib/uuid
+
+LIB_CFLAGS:=${CFLAGS} ${CPPFLAGS} -I. -I.. -I /opt/c-ares-1.12.0/build/include -I /opt/e2fsprogs-1.41.14/lib -I../lib
 LIB_CXXFLAGS:=$(LIB_CFLAGS) ${CPPFLAGS}
 LIB_LDFLAGS:=${LDFLAGS}
 
@@ -241,7 +246,8 @@ ifeq ($(WITH_DOCS),yes)
 endif
 
 INSTALL?=install
-prefix=/usr/local
+prefix=/home/sanchrist/opt/mosquitto-1.4.5/build
+#/usr/local
 mandir=${prefix}/share/man
 localedir=${prefix}/share/locale
 STRIP?=strip
